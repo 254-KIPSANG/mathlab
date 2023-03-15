@@ -1,0 +1,59 @@
+% Define initial parameters
+G = 6.67408e-11; % Gravitational constant
+m_sun = 1.9885e30; % Mass of Sun in kg
+m_earth = 5.972e24; % Mass of Earth in kg
+r_earth = 149.6e9; % Average distance from Earth to Sun in meters
+v_earth = 29.78e3; % Average speed of Earth in meters per second
+t_max = 365*24*60*60; % Maximum time in seconds (1 year)
+
+% Set up plot
+figure
+hold on
+grid on
+axis equal
+view(3)
+xlim([-2*r_earth, 2*r_earth])
+ylim([-2*r_earth, 2*r_earth])
+zlim([-2*r_earth, 2*r_earth])
+sun = plot3(0,0,0,'yo','MarkerFaceColor','y','MarkerSize',20);
+earth_orbit = plot3(r_earth*cos(0:0.01:2*pi), r_earth*sin(0:0.01:2*pi), 0*0.1*cos(0:0.01:2*pi), 'b-');
+earth = plot3(r_earth, 0, 0, 'bo', 'MarkerFaceColor', 'b', 'MarkerSize', 5);
+
+% Calculate Earth's position and velocity
+x_earth = r_earth;
+y_earth = 0;
+vx_earth = 0;
+vy_earth = v_earth;
+
+% Simulate motion of Earth around Sun
+t = 0;
+dt = 60*60; % Time step in seconds
+while t < t_max
+    % Calculate distance between Earth and Sun
+    r = sqrt(x_earth^2 + y_earth^2);
+    
+    % Calculate force on Earth due to Sun
+    f = G*m_sun*m_earth/r^2;
+    
+    % Calculate acceleration of Earth
+    ax_earth = -f/m_earth * x_earth/r;
+    ay_earth = -f/m_earth * y_earth/r;
+    
+    % Update velocity of Earth
+    vx_earth = vx_earth + ax_earth*dt;
+    vy_earth = vy_earth + ay_earth*dt;
+    
+    % Update position of Earth
+    x_earth = x_earth + vx_earth*dt;
+    y_earth = y_earth + vy_earth*dt;
+    
+    % Update Earth and orbit plot
+    set(earth, 'XData', x_earth, 'YData', y_earth, 'ZData', 0);
+    set(earth_orbit, 'XData', r_earth*cos(0:0.01:2*pi), 'YData', r_earth*sin(0:0.01:2*pi), 'ZData', 0*0.1*cos(0:0.01:2*pi));
+    
+    % Increment time
+    t = t + dt;
+    
+    % Pause to control animation speed
+    pause(0.0001);
+end
